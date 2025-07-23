@@ -1,39 +1,48 @@
-#include<philo.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/23 10:38:39 by ikozhina          #+#    #+#             */
+/*   Updated: 2025/07/23 13:58:49 by ikozhina         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-void    print_usage_msg(void)
+#include <philo.h>
+
+int	create_philos(t_data *data)
 {
-    printf("✅ Usage: \n");
-    printf("./philo <num_philos> <time_die> <time_eat> <time_sleep> ");
-    printf("[num_must_eat]\n");
-    printf("Arguments:\n");
-    printf("1. number of philosophers,\n");
-    printf("2. time (in ms) to die without eating,\n");
-    printf("3. time (in ms) to eat,\n");
-    printf("4. time (in ms) to sleep,\n");
-    printf("5. optionally, how many times each philosopher must eat ");
-    printf("before simulation ends.\n");
+	t_philo	*arr_of_philos;
+	int		i;
+
+	i = 0;
+	arr_of_philos = malloc(data->num_philos * sizeof(t_philo));
+	if (!arr_of_philos)
+	{
+		perror("malloc");
+		return (0);
+	}
+	while (i < data->num_philos)
+	{
+		arr_of_philos[i].id = i + 1;
+		arr_of_philos[i].main_data = data;
+		i++;
+	}
+	data->philos = arr_of_philos;
+	return (0);
 }
 
-int parse_input(int argc, char **argv)
+int	main(int argc, char **argv)
 {
-    (void)argv;
-    if (argc < 5 || argc > 6)
-    {
-        if (argc < 5)
-            printf("❌ Not enough arguments.\n");
-        else if (argc > 6)
-            printf("❌ Too many arguments.\n");
-        print_usage_msg();
-        return (1);
-    }
-    printf("args - %d\n", argc);
-    return(0);
-}
+	t_data	data;
 
-int main(int argc, char **argv)
-{
-    parse_input(argc, argv); 
-    return (0);
+	memset(&data, 0, sizeof(t_data));
+	if (parse_input(argc, argv, &data) != 0)
+		return (1);
+	if (create_philos(&data) != 0)
+		return (1);
+	return (0);
 }
-
-//philo num, time_to_die, time_to_eat, time_to_sleep, option
+// philo num, time_to_die, time_to_eat, time_to_sleep, option
