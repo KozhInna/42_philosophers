@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 13:58:04 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/24 13:15:42 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/24 14:33:52 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,5 +74,6 @@ int					parse_input(int argc, char **argv, t_data *data);
 void				print_usage_msg(void);
 int                 cleanup_data(t_data *data, int exit_code);
 int                 init_simulation(t_data *data);
+int                 get_curr_time();
 
 #endif
