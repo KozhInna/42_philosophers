@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 13:58:04 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/23 13:58:39 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/24 13:15:42 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ typedef struct s_fork
 typedef struct s_waiter
 {
 	pthread_mutex_t	waiter_mutex;
+    bool            waiter_mutex_init;
 	t_fork			*forks;
 }					t_waiter;
 
@@ -61,13 +62,17 @@ typedef struct s_data
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				num_must_eat;
-	uint64_t		start_time;
+	uint64_t		start_time;                    
 	t_philo			*philos;
-	t_waiter		water;
-	pthread_t		print_mutex;
+	t_waiter		waiter;
+	pthread_mutex_t print_mutex;
+    bool            print_mutex_init;
+    int             num_fork_mutex_init;
 }					t_data;
 
 int					parse_input(int argc, char **argv, t_data *data);
 void				print_usage_msg(void);
+int                 cleanup_data(t_data *data, int exit_code);
+int                 init_simulation(t_data *data);
 
 #endif
