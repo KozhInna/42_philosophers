@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 13:58:04 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/26 12:08:09 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/26 23:55:03 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <string.h>
 # include <sys/time.h>
 # include <unistd.h>
+# include <limits.h>
 
 typedef enum s_state
 {
@@ -72,7 +73,7 @@ typedef struct s_data
 }					t_data;
 
 int					parse_input(int argc, char **argv, t_data *data);
-void				print_usage_msg(void);
+void				print_usage_msg(char *msg);
 int                 cleanup_data(t_data *data, int exit_code);
 int                 init_simulation(t_data *data);
 uint64_t            get_curr_time();

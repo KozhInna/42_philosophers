@@ -1,19 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   exit_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:17:08 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/24 13:07:52 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/26 22:59:53 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 
-void	print_usage_msg(void)
+void	print_usage_msg(char *msg)
 {
+    printf("%s\n", msg);
 	printf("✅ Usage: \n");
 	printf("./philo <num_philos> <time_die> <time_eat> <time_sleep> ");
 	printf("[num_must_eat]\n");
