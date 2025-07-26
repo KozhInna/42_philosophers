@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:15:15 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/23 13:58:53 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/25 15:00:15 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,8 @@ void	process_input(int argc, char **argv, t_data *data)
 		data->time_to_sleep = data->time_to_die;
 	if (argc == 6)
 		data->num_must_eat = input_to_int(argv[5]);
+    else
+        data->num_must_eat = -1;
 }
 
 int	parse_input(int argc, char **argv, t_data *data)
@@ -86,11 +88,11 @@ int	parse_input(int argc, char **argv, t_data *data)
 	if (check_args_num(argc) == 1 || is_input_numeric(argc, argv) == 1)
 		return (1);
 	process_input(argc, argv, data);
-	printf("args - %d\n", argc);
-	int i = 0;
-	while (argv[i])
-	{
-		printf("args - \'%s\'\n", argv[i++]);
-	}
+	// printf("args - %d\n", argc);
+	// int i = 0;
+	// while (argv[i])
+	// {
+	// 	printf("args - \'%s\'\n", argv[i++]);
+	// }
 	return (0);
 }
