@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 13:58:04 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/24 14:33:52 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/26 12:08:09 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,11 @@ typedef struct s_waiter
 
 typedef struct s_data
 {
+    int             sim_running;
 	int				num_philos;
-	int				time_to_die;
-	int				time_to_eat;
-	int				time_to_sleep;
+	uint64_t		time_to_die;
+	uint64_t		time_to_eat;
+	uint64_t		time_to_sleep;
 	int				num_must_eat;
 	uint64_t		start_time;                    
 	t_philo			*philos;
@@ -74,6 +75,8 @@ int					parse_input(int argc, char **argv, t_data *data);
 void				print_usage_msg(void);
 int                 cleanup_data(t_data *data, int exit_code);
 int                 init_simulation(t_data *data);
-int                 get_curr_time();
+uint64_t            get_curr_time();
+uint64_t            time_since_sim_start(t_data *data);
+int                 all_eaten_enough(t_data *data);
 
 #endif

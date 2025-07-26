@@ -6,21 +6,29 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 13:15:17 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/24 14:30:46 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/25 15:52:49 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 
-int get_curr_time()
+uint64_t get_curr_time()
 {
     struct timeval  tv;
-    uint64_t       time_in_ms;
+    uint64_t        time_in_ms;
     
     if(gettimeofday(&tv, NULL) != 0)
         return (0);
-    time_in_ms = (uint16_t)(tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+    time_in_ms = (uint64_t)(tv.tv_sec * 1000) + (tv.tv_usec / 1000);
     return (time_in_ms);
+}
+
+uint64_t time_since_sim_start(t_data *data)
+{
+    uint64_t current_time;
+    
+    current_time = get_curr_time();
+    return (current_time - data->start_time);
 }
 
 int	create_philos(t_data *data)
@@ -41,6 +49,7 @@ int	create_philos(t_data *data)
 		arr_of_philos[i].main_data = data;
         arr_of_philos[i].num_eaten = 0;
         arr_of_philos[i].state = THINKING;
+        arr_of_philos[i].last_eat_time = 0;
 		i++;
 	}
 	data->philos = arr_of_philos;
@@ -71,6 +80,7 @@ int init_simulation(t_data *data)
     t_fork      *forks;
     uint64_t    time_in_ms;
 
+    data->sim_running = 1;
     forks = malloc(data->num_philos * sizeof(t_fork));
     if(!forks)
         return (1);
