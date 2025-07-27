@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 10:38:39 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/26 14:10:22 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/27 22:54:16 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,16 +73,14 @@ bool    is_eating( t_philo *philo)
             pthread_mutex_unlock(&data->waiter.waiter_mutex);
             print_state(philo, "has taken a fork");
             while (data->sim_running)
-                usleep(10000);
+                ft_usleep(10000);
             pthread_mutex_lock(&data->waiter.waiter_mutex);
             forks[left].is_available = true;
             pthread_mutex_unlock(&data->waiter.waiter_mutex);
             pthread_mutex_unlock(&forks[left].mutex);
         }
         else
-        {
             pthread_mutex_unlock(&data->waiter.waiter_mutex);
-        }
         return (false);
     }
     else if (forks[left].is_available && forks[right].is_available)
@@ -96,7 +94,7 @@ bool    is_eating( t_philo *philo)
             philo->state = EATING;
             pthread_mutex_unlock(&philo->main_data->waiter.waiter_mutex);
             print_state(philo, "is eating");
-            usleep(data->time_to_eat * 1000);
+            ft_usleep(data->time_to_eat);
             pthread_mutex_lock(&data->waiter.waiter_mutex);
             philo->num_eaten++;
             if (data->num_must_eat > 0 && all_eaten_enough(data))
@@ -117,7 +115,7 @@ void    is_sleeping(t_philo *philo)
     data = philo->main_data;
     philo->state = SLEEPING;
     print_state(philo, "is sleeping");
-    usleep(data->time_to_sleep * 1000);
+    ft_usleep(data->time_to_sleep);
 }
 
 void    *routine(void *arg)
@@ -127,6 +125,8 @@ void    *routine(void *arg)
 
     philo = (t_philo *)arg;
     data = philo->main_data;
+    while (get_curr_time() < data->start_time)
+        ft_usleep(50);
     while (data->sim_running)
     {
         if (!data->sim_running)
@@ -141,8 +141,6 @@ void    *routine(void *arg)
             philo->state = THINKING;
             print_state(philo, "is thinking");
         }
-        else
-            usleep(1000);
     }
     return (NULL);
 }
@@ -163,10 +161,7 @@ int all_eaten_enough(t_data *data)
         i++;
     }
     if (count == data->num_philos)
-    {
-        printf("here - %d\n", count);   
         return (1);
-    }
     return (0);
 }
 
@@ -195,6 +190,8 @@ void    *monitor(void *arg)
     
     data = (t_data *)arg;
     philos = data->philos;
+    while (get_curr_time() < data->start_time)
+        ft_usleep(50);
     while (data->sim_running)
     {
         i = 0;
@@ -203,7 +200,6 @@ void    *monitor(void *arg)
             if (is_smb_dead(data, &philos[i]))
             {
                 data->sim_running = 0;
-                // usleep(1000);
                 return (NULL);
             }
             i++;
@@ -219,13 +215,7 @@ void    *monitor(void *arg)
             }
             pthread_mutex_unlock(&data->waiter.waiter_mutex);
         }
-        // if (data->num_must_eat > 0 && all_eaten_enough(data))
-        // {
-        //     data->sim_running = 0;
-        //     return (NULL);
-        // }
-        // usleep(1000);
-        usleep(100);
+        ft_usleep(500);
     }
     return (NULL);
 }
@@ -238,6 +228,7 @@ int run_simulation(t_data *data)
 
     i = 0;
     philos = data->philos; 
+    data->start_time = get_curr_time() + 100;
     while (i < data->num_philos)
     {
         if (pthread_create(&philos[i].tid, NULL, routine, (void *)&philos[i]) != 0)

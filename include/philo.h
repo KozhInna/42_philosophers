@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 13:58:04 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/26 23:55:03 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/27 12:20:41 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,5 +79,6 @@ int                 init_simulation(t_data *data);
 uint64_t            get_curr_time();
 uint64_t            time_since_sim_start(t_data *data);
 int                 all_eaten_enough(t_data *data);
+void                ft_usleep(uint64_t sleep_time);
 
 #endif

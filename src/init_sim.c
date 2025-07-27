@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 13:15:17 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/25 15:52:49 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/27 22:57:41 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,14 @@ uint64_t time_since_sim_start(t_data *data)
     
     current_time = get_curr_time();
     return (current_time - data->start_time);
+}
+void    ft_usleep(uint64_t sleep_time)
+{
+    uint64_t start;
+    
+    start = get_curr_time();
+    while ((get_curr_time() - start) < sleep_time)
+        usleep(500);
 }
 
 int	create_philos(t_data *data)
@@ -78,7 +86,6 @@ int init_forks(t_data *data)
 int init_simulation(t_data *data)
 {
     t_fork      *forks;
-    uint64_t    time_in_ms;
 
     data->sim_running = 1;
     forks = malloc(data->num_philos * sizeof(t_fork));
@@ -96,9 +103,6 @@ int init_simulation(t_data *data)
     data->print_mutex_init = true;
     if (create_philos(data) != 0)
         return(1);
-    time_in_ms = get_curr_time();
-    if (!time_in_ms)
-        return (1);
-    data->start_time = time_in_ms;
+    data->start_time = 0;
     return (0);
 }
