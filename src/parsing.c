@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:15:15 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/27 00:57:30 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/28 14:34:42 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,15 @@ int	is_input_numeric(int argc, char **argv)
 	while (i < argc)
 	{
 		j = 0;
-        if (argv[i][j] == '+' || argv[i][j] == '-')
-            j++;
-        if (!argv[i][j])
-            return(print_usage_msg("❌ Arguments should be numeric."), 1);
+		if (argv[i][j] == '+' || argv[i][j] == '-')
+			j++;
+		if (!argv[i][j])
+			return (print_usage_msg("❌ Arguments should be numeric."), 1);
 		while (argv[i][j])
 		{
 			if (argv[i][j] < '0' || argv[i][j] > '9')
-				return(print_usage_msg("❌ Arguments should be numeric."), 1);
-            j++;
+				return (print_usage_msg("❌ Arguments should be numeric."), 1);
+			j++;
 		}
 		i++;
 	}
@@ -41,9 +41,9 @@ int	check_args_num(int argc)
 	if (argc < 5 || argc > 6)
 	{
 		if (argc < 5)
-            print_usage_msg("❌ Not enough arguments.");
+			print_usage_msg("❌ Not enough arguments.");
 		else if (argc > 6)
-            print_usage_msg("❌ Too many arguments.");
+			print_usage_msg("❌ Too many arguments.");
 		return (1);
 	}
 	return (0);
@@ -64,9 +64,9 @@ int	input_to_int(char *arg)
 	return (res);
 }
 
-long int input_to_long(char *arg, int *err)
+long int	input_to_long(char *arg, int *err)
 {
-    long	res;
+	long	res;
 
 	res = 0;
 	while (*arg == ' ' || (*arg >= 9 && *arg <= 13))
@@ -74,50 +74,65 @@ long int input_to_long(char *arg, int *err)
 	if (*arg == '-' || *arg == '+')
 	{
 		if (*arg == '-')
-        {
-            *err = -2;
-            return (-1);
-        }
-        arg++;
+		{
+			*err = -2;
+			return (-1);
+		}
+		arg++;
 	}
 	while (*arg >= '0' && *arg <= '9')
 	{
 		res = res * 10 + (*arg - '0');
-        if (res > INT_MAX)
-        {
-            *err = -3;
-            return (-1);
-        }
+		if (res > INT_MAX)
+		{
+			*err = -3;
+			return (-1);
+		}
 		arg++;
 	}
 	return (res);
 }
 
-int process_input(int argc, char **argv, t_data *data)
+int	process_input(int argc, char **argv, t_data *data)
 {
-    int err;
-    
-    err = 0;
+	int	err;
+
+	err = 0;
 	data->num_philos = input_to_long(argv[1], &err);
-    if (err == 0)
-	    data->time_to_die = input_to_long(argv[2], &err);
-    if (err == 0)
-	    data->time_to_eat = input_to_long(argv[3], &err);
-    if (err == 0)
-	    data->time_to_sleep = input_to_long(argv[4], &err);
+	if (err == 0)
+		data->time_to_die = input_to_long(argv[2], &err);
+	if (err == 0)
+		data->time_to_eat = input_to_long(argv[3], &err);
+	if (err == 0)
+		data->time_to_sleep = input_to_long(argv[4], &err);
 	if (argc == 6 && err == 0)
 		data->num_must_eat = input_to_long(argv[5], &err);
-    else
-        data->num_must_eat = -1;
-    if (err == -2)
-        return (print_usage_msg("❌ Arguments can't be negative."), 1);
-    else if (err == -3)
-        return (print_usage_msg("❌ Arguments value is too big."), 1);
-    if (data->time_to_eat > data->time_to_die)
+	else
+		data->num_must_eat = -1;
+	if (err == -2)
+		return (print_usage_msg("❌ Arguments can't be negative."), 1);
+	else if (err == -3)
+		return (print_usage_msg("❌ Arguments value is too big."), 1);
+	if (data->time_to_eat > data->time_to_die)
 		data->time_to_eat = data->time_to_die;
 	if (data->time_to_sleep > data->time_to_die)
 		data->time_to_sleep = data->time_to_die;
-    return (0);
+	return (0);
+}
+
+int	check_range(t_data *data)
+{
+	if (!(data->num_philos > 0 && data->num_philos <= 200))
+		return (print_usage_msg("❌ Number of philosophers must be between 1 and 200."), 1);
+	if (!(data->time_to_die > 0 && data->time_to_die > 60))
+		return (print_usage_msg("❌ Time must be greater than 60 ms."), 1);
+	if (!(data->time_to_eat > 0 && data->time_to_eat > 60))
+		return (print_usage_msg("❌ Time must be greater than 60 ms."), 1);
+	if (!(data->time_to_sleep > 0 && data->time_to_sleep > 60))
+		return (print_usage_msg("❌ Time must be greater than 60 ms."), 1);
+	if (data->num_must_eat == 0)
+		return (print_usage_msg("❌ Number of times to eat must be greater than 0."), 1);
+	return (0);
 }
 
 int	parse_input(int argc, char **argv, t_data *data)
@@ -125,6 +140,8 @@ int	parse_input(int argc, char **argv, t_data *data)
 	if (check_args_num(argc) == 1 || is_input_numeric(argc, argv) == 1)
 		return (1);
 	if (process_input(argc, argv, data) == 1)
-        return (1);
+		return (1);
+	if (check_range(data) == 1)
+		return (1);
 	return (0);
 }
