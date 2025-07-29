@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:15:15 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/28 14:34:42 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/29 11:15:41 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,13 +124,13 @@ int	check_range(t_data *data)
 {
 	if (!(data->num_philos > 0 && data->num_philos <= 200))
 		return (print_usage_msg("❌ Number of philosophers must be between 1 and 200."), 1);
-	if (!(data->time_to_die > 0 && data->time_to_die > 60))
+	if (!(data->time_to_die > 60))
 		return (print_usage_msg("❌ Time must be greater than 60 ms."), 1);
-	if (!(data->time_to_eat > 0 && data->time_to_eat > 60))
+	if (!(data->time_to_eat > 60))
 		return (print_usage_msg("❌ Time must be greater than 60 ms."), 1);
-	if (!(data->time_to_sleep > 0 && data->time_to_sleep > 60))
+	if (!(data->time_to_sleep > 60))
 		return (print_usage_msg("❌ Time must be greater than 60 ms."), 1);
-	if (data->num_must_eat == 0)
+	if (!(data->num_must_eat > 0))
 		return (print_usage_msg("❌ Number of times to eat must be greater than 0."), 1);
 	return (0);
 }
