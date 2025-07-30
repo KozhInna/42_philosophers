@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 13:15:17 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/27 22:57:41 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/30 10:45:44 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void    ft_usleep(uint64_t sleep_time)
     
     start = get_curr_time();
     while ((get_curr_time() - start) < sleep_time)
-        usleep(500);
+        usleep(10);
 }
 
 int	create_philos(t_data *data)
@@ -104,5 +104,17 @@ int init_simulation(t_data *data)
     if (create_philos(data) != 0)
         return(1);
     data->start_time = 0;
+    if (pthread_mutex_init(&data->batch_mutex, NULL) != 0)
+        return (1);
+    data->batch_mutex_init = true;
+    
+    if (pthread_mutex_init(&data->start_mutex, NULL) != 0)
+        return (1);
+    data->start_mutex_init = true;
+    data->threads_ready = 0;
+    data->can_start = 0;
+    
+    data->batch = 1;
+    data->num_eaten_in_batch = 0;
     return (0);
 }
