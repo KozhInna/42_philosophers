@@ -6,37 +6,37 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 13:15:17 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/27 22:57:41 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/30 13:00:21 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 
-uint64_t get_curr_time()
+uint64_t	get_curr_time(void)
 {
-    struct timeval  tv;
-    uint64_t        time_in_ms;
-    
-    if(gettimeofday(&tv, NULL) != 0)
-        return (0);
-    time_in_ms = (uint64_t)(tv.tv_sec * 1000) + (tv.tv_usec / 1000);
-    return (time_in_ms);
+	struct timeval	tv;
+	uint64_t		time_in_ms;
+
+	if (gettimeofday(&tv, NULL) != 0)
+		return (0);
+	time_in_ms = (uint64_t)(tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+	return (time_in_ms);
 }
 
-uint64_t time_since_sim_start(t_data *data)
+uint64_t	time_since_sim_start(t_data *data)
 {
-    uint64_t current_time;
-    
-    current_time = get_curr_time();
-    return (current_time - data->start_time);
+	uint64_t	current_time;
+
+	current_time = get_curr_time();
+	return (current_time - data->start_time);
 }
-void    ft_usleep(uint64_t sleep_time)
+void	ft_usleep(uint64_t sleep_time)
 {
-    uint64_t start;
-    
-    start = get_curr_time();
-    while ((get_curr_time() - start) < sleep_time)
-        usleep(500);
+	uint64_t	start;
+
+	start = get_curr_time();
+	while ((get_curr_time() - start) < sleep_time)
+		usleep(500);
 }
 
 int	create_philos(t_data *data)
@@ -55,54 +55,59 @@ int	create_philos(t_data *data)
 	{
 		arr_of_philos[i].id = i + 1;
 		arr_of_philos[i].main_data = data;
-        arr_of_philos[i].num_eaten = 0;
-        arr_of_philos[i].state = THINKING;
-        arr_of_philos[i].last_eat_time = 0;
+		arr_of_philos[i].num_eaten = 0;
+		arr_of_philos[i].state = THINKING;
+		arr_of_philos[i].last_eat_time = 0;
 		i++;
 	}
 	data->philos = arr_of_philos;
 	return (0);
 }
 
-int init_forks(t_data *data)
+int	init_forks(t_data *data)
 {
-    int     i;
-    t_fork  *forks;
+	int		i;
+	t_fork	*forks;
 
-    i = 0;
-    forks = data->waiter.forks;
-    while (i < data->num_philos)
-    {
-        forks[i].id = i + 1;
-        forks[i].is_available = true;
-        if (pthread_mutex_init(&forks[i].mutex, NULL) != 0)
-            return (1);
-        data->num_fork_mutex_init++;
-        i++;
-    }
-    return (0);
+	i = 0;
+	forks = data->waiter.forks;
+	while (i < data->num_philos)
+	{
+		forks[i].id = i + 1;
+		forks[i].is_available = true;
+		if (pthread_mutex_init(&forks[i].mutex, NULL) != 0)
+			return (1);
+		data->num_fork_mutex_init++;
+		i++;
+	}
+	return (0);
 }
 
-int init_simulation(t_data *data)
+int	init_simulation(t_data *data)
 {
-    t_fork      *forks;
+	t_fork	*forks;
 
-    data->sim_running = 1;
-    forks = malloc(data->num_philos * sizeof(t_fork));
-    if(!forks)
-        return (1);
-    data->waiter.forks = forks;
-    data->num_fork_mutex_init = 0;
-    if (init_forks(data) != 0)
-        return (1);
-    if (pthread_mutex_init(&data->waiter.waiter_mutex, NULL) != 0)
-        return (1);
-    data->waiter.waiter_mutex_init = true;
-    if (pthread_mutex_init(&data->print_mutex, NULL) != 0)
-        return (1);
-    data->print_mutex_init = true;
-    if (create_philos(data) != 0)
-        return(1);
-    data->start_time = 0;
-    return (0);
+	data->sim_running = 1;
+	forks = malloc(data->num_philos * sizeof(t_fork));
+	if (!forks)
+		return (1);
+	data->waiter.forks = forks;
+	data->num_fork_mutex_init = 0;
+	if (init_forks(data) != 0)
+		return (1);
+	if (pthread_mutex_init(&data->waiter.waiter_mutex, NULL) != 0)
+		return (1);
+	data->waiter.waiter_mutex_init = true;
+	if (pthread_mutex_init(&data->print_mutex, NULL) != 0)
+		return (1);
+	data->print_mutex_init = true;
+	if (create_philos(data) != 0)
+		return (1);
+	data->start_time = 0;
+	// if (pthread_mutex_init(&data->batch_mutex, NULL) != 0)
+	// 	return (1);
+	// data->batch_mutex_init = true;
+	// data->batch = 1;
+	// data->num_eaten_in_batch = 0;
+	return (0);
 }
