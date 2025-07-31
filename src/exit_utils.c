@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:17:08 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/26 22:59:53 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/31 11:36:36 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	print_usage_msg(char *msg)
 {
-    printf("%s\n", msg);
+	printf("%s\n", msg);
 	printf("✅ Usage: \n");
 	printf("./philo <num_philos> <time_die> <time_eat> <time_sleep> ");
 	printf("[num_must_eat]\n");
@@ -26,28 +26,29 @@ void	print_usage_msg(char *msg)
 	printf("5. optionally, how many times each philosopher must eat ");
 	printf("before simulation ends.\n");
 }
-int cleanup_data(t_data *data, int exit_code)
-{
-    t_fork  *forks;
-    int     i;
 
-    i = 0;
-    forks = data->waiter.forks;
-    if (data->philos)
-    {
-        free(data->philos);
-        data->philos = NULL;
-    }
-    if (data->print_mutex_init)
-        pthread_mutex_destroy(&data->print_mutex);
-    if (data->waiter.waiter_mutex_init)
-        pthread_mutex_destroy(&data->waiter.waiter_mutex);
-    if (forks)
-    {
-        while (i < data->num_fork_mutex_init)
-            pthread_mutex_destroy(&forks[i++].mutex);
-        free(forks);
-        data->waiter.forks = NULL;
-    }
-    return (exit_code);
+int	cleanup_data(t_data *data, int exit_code)
+{
+	t_fork	*forks;
+	int		i;
+
+	i = 0;
+	forks = data->waiter.forks;
+	if (data->philos)
+	{
+		free(data->philos);
+		data->philos = NULL;
+	}
+	if (data->print_mutex_init)
+		pthread_mutex_destroy(&data->print_mutex);
+	if (data->waiter.waiter_mutex_init)
+		pthread_mutex_destroy(&data->waiter.waiter_mutex);
+	if (forks)
+	{
+		while (i < data->num_fork_mutex_init)
+			pthread_mutex_destroy(&forks[i++].mutex);
+		free(forks);
+		data->waiter.forks = NULL;
+	}
+	return (exit_code);
 }

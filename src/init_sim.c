@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 13:15:17 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/30 13:00:21 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/31 11:35:51 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,10 +104,5 @@ int	init_simulation(t_data *data)
 	if (create_philos(data) != 0)
 		return (1);
 	data->start_time = 0;
-	// if (pthread_mutex_init(&data->batch_mutex, NULL) != 0)
-	// 	return (1);
-	// data->batch_mutex_init = true;
-	// data->batch = 1;
-	// data->num_eaten_in_batch = 0;
 	return (0);
 }

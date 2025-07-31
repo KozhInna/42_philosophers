@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 13:58:04 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/30 11:50:34 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/31 11:35:32 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,6 @@ typedef struct s_data
 	pthread_mutex_t	print_mutex;
 	bool			print_mutex_init;
 	int				num_fork_mutex_init;
-	int				num_eaten_in_batch;
-	int				batch;
-	pthread_mutex_t	batch_mutex;
-	bool			batch_mutex_init;
 }					t_data;
 
 int					parse_input(int argc, char **argv, t_data *data);

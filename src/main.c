@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 10:38:39 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/30 13:18:56 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/31 11:38:07 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ void	print_state(t_philo *philo, char *state)
 	data = philo->main_data;
 	time = time_since_sim_start(data);
 	pthread_mutex_lock(&data->print_mutex);
+	if (!data->sim_running)
+		return ;
 	if (data->sim_running || (philo->state == DEAD))
 		printf("%lu %d %s\n", time, philo->id, state);
 	pthread_mutex_unlock(&data->print_mutex);
@@ -49,53 +51,31 @@ void	release_forks(t_philo *philo, int left, int right)
 	pthread_mutex_unlock(&forks[right].mutex);
 }
 
-// 2, 4, 6, 8 - even - ==0
-// 3,7 - odd - ==1
-
-bool	is_eating(t_philo *philo)
+void	is_eating(t_philo *philo)
 {
 	t_data	*data;
 	int		left;
 	int		right;
-	// bool	is_odd;
-	// bool	is_my_turn;
-	// int		batch_size;
-	int 	philo_index;
+	int		philo_index;
 
 	data = philo->main_data;
 	philo_index = philo->id - 1;
 	left = (philo_index + 1 + data->num_philos) % data->num_philos;
 	right = philo_index;
-	// is_odd = philo->id % 2 != 0;
-	// is_my_turn = ((data->batch == 1 && is_odd) || (data->batch == 0
-	// 			&& !is_odd));
-	// if (!is_my_turn)
-	// 	return (false);
 	take_forks(philo, left, right);
+	if (!data->sim_running)
+	{
+		release_forks(philo, left, right);
+		return ;
+	}
 	philo->last_eat_time = time_since_sim_start(data);
 	philo->state = EATING;
 	print_state(philo, "is eating");
 	ft_usleep(data->time_to_eat);
 	philo->num_eaten++;
-
-	// pthread_mutex_lock(&data->batch_mutex);
-	// data->num_eaten_in_batch++;
-	// if (data->num_philos % 2 == 1)
-	// 	batch_size = (data->num_philos + 1) / 2;
-	// else
-	// 	batch_size = data->num_philos / 2;
-	// if (data->num_eaten_in_batch >= batch_size)
-	// {
-	// 	data->batch = 1 - data->batch;
-	// 	// printf("batch changed\n");
-	// 	data->num_eaten_in_batch = 0;
-	// }
-	// pthread_mutex_unlock(&data->batch_mutex);
-
 	if (data->num_must_eat > 0 && all_eaten_enough(data))
 		data->sim_running = 0;
 	release_forks(philo, left, right);
-	return (true);
 }
 
 void	is_sleeping(t_philo *philo)
@@ -107,53 +87,47 @@ void	is_sleeping(t_philo *philo)
 	print_state(philo, "is sleeping");
 	ft_usleep(data->time_to_sleep);
 }
-
 void	*routine(void *arg)
 {
 	t_philo	*philo;
 	t_data	*data;
-	bool    is_even;
-    bool    is_odd;
+	bool	is_even;
+	bool	is_odd;
 
 	philo = (t_philo *)arg;
-
-	is_even = (philo->id % 2 == 0); // 2, 4, 6, and 8 are even
-    is_odd = (philo->id % 2 != 0); // 1, 3, 5, and 7 are odd
-
+	is_even = (philo->id % 2 == 0);
+	is_odd = (philo->id % 2 != 0);
 	data = philo->main_data;
-
 	while (get_curr_time() < data->start_time)
 		ft_usleep(50);
-
 	if (is_odd && philo->id == data->num_philos && data->num_philos % 2 != 0)
-    {
-        philo->state = THINKING;
-        print_state(philo, "is thinking");
-        ft_usleep(data->time_to_eat + data->time_to_sleep);
-    }
-    else if (is_even)
-    {
-        philo->state = THINKING;
-        print_state(philo, "is thinking");
-        ft_usleep(data->time_to_eat);
-    }
+	{
+		philo->state = THINKING;
+		print_state(philo, "is thinking");
+		ft_usleep(data->time_to_eat);
+		ft_usleep(data->time_to_sleep);
+	}
+	else if (is_even)
+	{
+		philo->state = THINKING;
+		print_state(philo, "is thinking");
+		ft_usleep(data->time_to_eat);
+	}
 	while (data->sim_running)
 	{
 		if (!data->sim_running)
 			break ;
-		if (is_eating(philo))
+		is_eating(philo);
+		if (!data->sim_running)
+			break ;
+		is_sleeping(philo);
+		if (!data->sim_running)
+			break ;
+		if (data->num_philos % 2 != 0)
 		{
-			if (!data->sim_running)
-				return (NULL);
-			is_sleeping(philo);
-		}
-		else
-		{
-			if (!data->sim_running)
-				break ;
 			philo->state = THINKING;
-        	print_state(philo, "is thinking");
-        	ft_usleep(data->time_to_eat);
+			print_state(philo, "is thinking");
+			ft_usleep(data->time_to_eat);
 		}
 	}
 	return (NULL);
@@ -243,7 +217,7 @@ int	run_simulation(t_data *data)
 
 	i = 0;
 	philos = data->philos;
-	data->start_time = get_curr_time() + 100;
+	data->start_time = get_curr_time() + 200;
 	while (i < data->num_philos)
 	{
 		if (pthread_create(&philos[i].tid, NULL, routine,
