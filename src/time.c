@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 16:18:38 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/31 16:46:49 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/31 22:40:33 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,4 +38,12 @@ void	ft_usleep(uint64_t sleep_time)
 	start = get_curr_time();
 	while ((get_curr_time() - start) < sleep_time)
 		usleep(500);
+}
+void	ft_usleep_interupt(uint64_t sleep_time, t_data *data)
+{
+	uint64_t	start;
+
+	start = get_curr_time();
+	while (data->sim_running && (get_curr_time() - start) < sleep_time)
+		usleep(10);
 }

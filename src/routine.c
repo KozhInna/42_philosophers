@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 16:30:30 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/31 16:49:33 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/31 23:09:24 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,12 @@ void	print_state(t_philo *philo, char *state)
 
 void	is_sleeping(t_philo *philo)
 {
-	t_data	*data;
+	t_data      *data;
 
 	data = philo->main_data;
 	philo->state = SLEEPING;
 	print_state(philo, "is sleeping");
-	ft_usleep(data->time_to_sleep);
+    ft_usleep_interupt(data->time_to_sleep, data);
 }
 
 void	think_sleep(t_philo *philo, uint64_t time)
@@ -46,7 +46,7 @@ void	think_sleep(t_philo *philo, uint64_t time)
 		return ;
 	philo->state = THINKING;
 	print_state(philo, "is thinking");
-	ft_usleep(time);
+	ft_usleep_interupt(time, data);
 }
 
 void	sim_delay(t_philo *philo, t_data *data)
