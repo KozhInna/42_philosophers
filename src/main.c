@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 10:38:39 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/31 11:38:07 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/31 12:41:02 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,20 @@ void	release_forks(t_philo *philo, int left, int right)
 	forks[right].is_available = true;
 	pthread_mutex_unlock(&forks[right].mutex);
 }
+void	handle_one_philo(t_philo *philo, t_data *data)
+{
+	t_fork	*forks;
+
+	forks = data->waiter.forks;
+	pthread_mutex_lock(&forks[0].mutex);
+	forks[0].is_available = false;
+	philo->state = WAITING_FORK;
+	print_state(philo, "has taken a fork");
+	while (data->sim_running)
+		ft_usleep(1000);
+	forks[0].is_available = true;
+	pthread_mutex_unlock(&forks[0].mutex);
+}
 
 void	is_eating(t_philo *philo)
 {
@@ -62,6 +76,11 @@ void	is_eating(t_philo *philo)
 	philo_index = philo->id - 1;
 	left = (philo_index + 1 + data->num_philos) % data->num_philos;
 	right = philo_index;
+	if (data->num_philos == 1)
+	{
+		handle_one_philo(philo, data);
+		return ;
+	}
 	take_forks(philo, left, right);
 	if (!data->sim_running)
 	{
@@ -100,7 +119,7 @@ void	*routine(void *arg)
 	data = philo->main_data;
 	while (get_curr_time() < data->start_time)
 		ft_usleep(50);
-	if (is_odd && philo->id == data->num_philos && data->num_philos % 2 != 0)
+	if (is_odd && philo->id == data->num_philos && data->num_philos != 1)
 	{
 		philo->state = THINKING;
 		print_state(philo, "is thinking");
@@ -144,9 +163,11 @@ int	all_eaten_enough(t_data *data)
 	i = 0;
 	while (i < data->num_philos)
 	{
+		pthread_mutex_lock(&data->waiter.waiter_mutex);
 		if (philos[i].num_eaten >= data->num_must_eat)
 			count++;
 		i++;
+		pthread_mutex_lock(&data->waiter.waiter_mutex);
 	}
 	if (count == data->num_philos)
 		return (1);
@@ -184,7 +205,7 @@ void	*monitor(void *arg)
 	while (data->sim_running)
 	{
 		i = 0;
-		while (i < data->num_philos)
+		while (i < data->num_philos && data->sim_running)
 		{
 			if (is_smb_dead(data, &philos[i]))
 			{
@@ -193,18 +214,15 @@ void	*monitor(void *arg)
 			}
 			i++;
 		}
-		if (data->num_must_eat > 0)
+		if (data->num_must_eat > 0 && data->sim_running)
 		{
-			pthread_mutex_lock(&data->waiter.waiter_mutex);
 			if (all_eaten_enough(data))
 			{
 				data->sim_running = 0;
-				pthread_mutex_unlock(&data->waiter.waiter_mutex);
 				return (NULL);
 			}
-			pthread_mutex_unlock(&data->waiter.waiter_mutex);
 		}
-		ft_usleep(500);
+		ft_usleep(1);
 	}
 	return (NULL);
 }
@@ -250,9 +268,5 @@ int	main(int argc, char **argv)
 		return (cleanup_data(&data, 1));
 	if (run_simulation(&data) != 0)
 		return (cleanup_data(&data, 1));
-	// printf("time %llu\n", data.start_time);
-	// usleep(200000);
-	// printf("time %llu\n", get_time_elapsed(&data));
 	return (0);
 }
-// philo num, time_to_die, time_to_eat, time_to_sleep, option
