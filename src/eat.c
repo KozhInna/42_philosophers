@@ -6,22 +6,41 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 16:34:39 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/31 17:43:44 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/31 23:07:29 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	take_forks(t_philo *philo, int left, int right)
+void	take_forks(t_philo *philo, int left, int right, t_data *data)
 {
 	t_fork	*forks;
+    int     first;
+    int     second;
 
+    first = (left < right) ? left : right;
+    second = (left < right) ? right : left;
 	forks = philo->main_data->waiter.forks;
-	pthread_mutex_lock(&forks[left].mutex);
-	forks[left].is_available = false;
+    if (!data->sim_running)
+    {
+        return ;
+    }
+	pthread_mutex_lock(&forks[first].mutex);
+    if (!data->sim_running)
+    {
+        pthread_mutex_unlock(&forks[first].mutex);
+        return ;
+    }
+	forks[first].is_available = false;
 	print_state(philo, "has taken a fork");
-	pthread_mutex_lock(&forks[right].mutex);
-	forks[right].is_available = false;
+	pthread_mutex_lock(&forks[second].mutex);
+    if (!data->sim_running)
+    {
+        pthread_mutex_unlock(&forks[first].mutex);
+        pthread_mutex_unlock(&forks[second].mutex);
+        return ;
+    }
+	forks[second].is_available = false;
 	print_state(philo, "has taken a fork");
 }
 
@@ -56,17 +75,19 @@ void	is_eating(t_philo *philo)
 	t_data	*data;
 	int		left;
 	int		right;
-	int		philo_index;
 
 	data = philo->main_data;
-	philo_index = philo->id - 1;
-	left = (philo_index + 1 + data->num_philos) % data->num_philos;
-	right = philo_index;
+	left = philo->id % data->num_philos;
+	right = philo->id - 1;
+    
 	if (data->num_philos == 1)
 		return (handle_one_philo(philo, data));
-	take_forks(philo, left, right);
+	take_forks(philo, left, right, data);
 	if (!data->sim_running)
-		return (release_forks(philo, left, right));
+    {
+        release_forks(philo, left, right);
+		return ;
+    }
 	pthread_mutex_lock(&data->waiter.waiter_mutex);
 	philo->last_eat_time = time_since_sim_start(data);
 	philo->state = EATING;
