@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 10:38:39 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/28 14:28:16 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/31 11:38:07 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ void	print_state(t_philo *philo, char *state)
 	data = philo->main_data;
 	time = time_since_sim_start(data);
 	pthread_mutex_lock(&data->print_mutex);
+	if (!data->sim_running)
+		return ;
 	if (data->sim_running || (philo->state == DEAD))
 		printf("%lu %d %s\n", time, philo->id, state);
 	pthread_mutex_unlock(&data->print_mutex);
@@ -49,62 +51,31 @@ void	release_forks(t_philo *philo, int left, int right)
 	pthread_mutex_unlock(&forks[right].mutex);
 }
 
-bool	is_eating(t_philo *philo)
+void	is_eating(t_philo *philo)
 {
-	t_data		*data;
-	t_fork		*forks;
-	int			left;
-	int			right;
-	uint64_t	since_last_meal;
-	bool		near_starving;
+	t_data	*data;
+	int		left;
+	int		right;
+	int		philo_index;
 
 	data = philo->main_data;
-	forks = data->waiter.forks;
-	left = philo->id - 1;
-	right = philo->id % data->num_philos;
-	pthread_mutex_lock(&data->waiter.waiter_mutex);
-	if (left == right)
+	philo_index = philo->id - 1;
+	left = (philo_index + 1 + data->num_philos) % data->num_philos;
+	right = philo_index;
+	take_forks(philo, left, right);
+	if (!data->sim_running)
 	{
-		if (forks[left].is_available)
-		{
-			pthread_mutex_lock(&forks[left].mutex);
-			forks[left].is_available = false;
-			pthread_mutex_unlock(&data->waiter.waiter_mutex);
-			print_state(philo, "has taken a fork");
-			while (data->sim_running)
-				ft_usleep(10000);
-			pthread_mutex_lock(&data->waiter.waiter_mutex);
-			forks[left].is_available = true;
-			pthread_mutex_unlock(&data->waiter.waiter_mutex);
-			pthread_mutex_unlock(&forks[left].mutex);
-		}
-		else
-			pthread_mutex_unlock(&data->waiter.waiter_mutex);
-		return (false);
+		release_forks(philo, left, right);
+		return ;
 	}
-	else if (forks[left].is_available && forks[right].is_available)
-	{
-		since_last_meal = time_since_sim_start(data) - philo->last_eat_time;
-		near_starving = since_last_meal > (data->time_to_die * 0.8);
-		if (philo->num_eaten == 0 || near_starving)
-		{
-			take_forks(philo, left, right);
-			philo->last_eat_time = time_since_sim_start(data);
-			philo->state = EATING;
-			pthread_mutex_unlock(&philo->main_data->waiter.waiter_mutex);
-			print_state(philo, "is eating");
-			ft_usleep(data->time_to_eat);
-			pthread_mutex_lock(&data->waiter.waiter_mutex);
-			philo->num_eaten++;
-			if (data->num_must_eat > 0 && all_eaten_enough(data))
-				data->sim_running = 0;
-			pthread_mutex_unlock(&data->waiter.waiter_mutex);
-			release_forks(philo, left, right);
-			return (true);
-		}
-	}
-	pthread_mutex_unlock(&philo->main_data->waiter.waiter_mutex);
-	return (false);
+	philo->last_eat_time = time_since_sim_start(data);
+	philo->state = EATING;
+	print_state(philo, "is eating");
+	ft_usleep(data->time_to_eat);
+	philo->num_eaten++;
+	if (data->num_must_eat > 0 && all_eaten_enough(data))
+		data->sim_running = 0;
+	release_forks(philo, left, right);
 }
 
 void	is_sleeping(t_philo *philo)
@@ -116,29 +87,47 @@ void	is_sleeping(t_philo *philo)
 	print_state(philo, "is sleeping");
 	ft_usleep(data->time_to_sleep);
 }
-
 void	*routine(void *arg)
 {
 	t_philo	*philo;
 	t_data	*data;
+	bool	is_even;
+	bool	is_odd;
 
 	philo = (t_philo *)arg;
+	is_even = (philo->id % 2 == 0);
+	is_odd = (philo->id % 2 != 0);
 	data = philo->main_data;
 	while (get_curr_time() < data->start_time)
 		ft_usleep(50);
+	if (is_odd && philo->id == data->num_philos && data->num_philos % 2 != 0)
+	{
+		philo->state = THINKING;
+		print_state(philo, "is thinking");
+		ft_usleep(data->time_to_eat);
+		ft_usleep(data->time_to_sleep);
+	}
+	else if (is_even)
+	{
+		philo->state = THINKING;
+		print_state(philo, "is thinking");
+		ft_usleep(data->time_to_eat);
+	}
 	while (data->sim_running)
 	{
 		if (!data->sim_running)
 			break ;
-		if (is_eating(philo))
+		is_eating(philo);
+		if (!data->sim_running)
+			break ;
+		is_sleeping(philo);
+		if (!data->sim_running)
+			break ;
+		if (data->num_philos % 2 != 0)
 		{
-			if (!data->sim_running)
-				return (NULL);
-			is_sleeping(philo);
-			if (!data->sim_running)
-				return (NULL);
 			philo->state = THINKING;
 			print_state(philo, "is thinking");
+			ft_usleep(data->time_to_eat);
 		}
 	}
 	return (NULL);
@@ -228,7 +217,7 @@ int	run_simulation(t_data *data)
 
 	i = 0;
 	philos = data->philos;
-	data->start_time = get_curr_time() + 100;
+	data->start_time = get_curr_time() + 200;
 	while (i < data->num_philos)
 	{
 		if (pthread_create(&philos[i].tid, NULL, routine,
