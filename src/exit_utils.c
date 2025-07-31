@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:17:08 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/31 11:36:36 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/31 13:32:18 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,4 +51,34 @@ int	cleanup_data(t_data *data, int exit_code)
 		data->waiter.forks = NULL;
 	}
 	return (exit_code);
+}
+
+int	join_threads(t_data *data, int num)
+{
+	t_philo	*threads;
+	int		i;
+
+	i = 0;
+	threads = data->philos;
+	while (i < num)
+	{
+		if (pthread_join(threads[i].tid, NULL) != 0)
+		{
+			print_error_msg("Pthread_join failed\n");
+			return (1);
+		}
+		i++;
+	}
+	return (0);
+}
+
+void	print_error_msg(char *s)
+{
+	if (s == NULL)
+		return ;
+	while (*s)
+	{
+		write(2, s, 1);
+		s++;
+	}
 }

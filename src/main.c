@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 10:38:39 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/31 12:41:02 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/31 13:59:00 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,7 +231,7 @@ int	run_simulation(t_data *data)
 {
 	int			i;
 	t_philo		*philos;
-	pthread_t	tid;
+	pthread_t	monitor_tid;
 
 	i = 0;
 	philos = data->philos;
@@ -240,19 +240,22 @@ int	run_simulation(t_data *data)
 	{
 		if (pthread_create(&philos[i].tid, NULL, routine,
 				(void *)&philos[i]) != 0)
-			return (1);
+			{
+				data->sim_running = 0;
+				join_threads(data, i);
+				return (1);
+			}
 		i++;
 	}
-	if (pthread_create(&tid, NULL, monitor, (void *)data) != 0)
-		return (1);
-	i = 0;
-	while (i < data->num_philos)
+	if (pthread_create(&monitor_tid, NULL, monitor, (void *)data) != 0)
 	{
-		if (pthread_join(philos[i].tid, NULL) != 0)
-			return (1);
-		i++;
+		data->sim_running = 0;
+		join_threads(data, data->num_philos);
+		return (1);
 	}
-	if (pthread_join(tid, NULL) != 0)
+	if (join_threads(data, data->num_philos) != 0)
+		return (1);
+	if (pthread_join(monitor_tid, NULL) != 0)
 		return (1);
 	return (0);
 }
