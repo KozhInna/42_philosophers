@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:17:08 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/31 13:32:18 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/31 14:15:49 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 void	print_usage_msg(char *msg)
 {
-	printf("%s\n", msg);
+	if (msg)
+		print_error_msg(msg);
 	printf("✅ Usage: \n");
 	printf("./philo <num_philos> <time_die> <time_eat> <time_sleep> ");
 	printf("[num_must_eat]\n");
@@ -72,13 +73,20 @@ int	join_threads(t_data *data, int num)
 	return (0);
 }
 
+size_t	ft_strlen(const char *s)
+{
+	size_t	i;
+
+	i = 0;
+	while (s[i] != '\0')
+		i++;
+	return (i);
+}
+
 void	print_error_msg(char *s)
 {
 	if (s == NULL)
 		return ;
-	while (*s)
-	{
-		write(2, s, 1);
-		s++;
-	}
+	write(2, s, ft_strlen(s));
+	write(2, "\n", 1);
 }
