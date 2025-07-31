@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:15:15 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/31 14:16:32 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/31 16:26:42 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,21 +47,6 @@ int	check_args_num(int argc)
 		return (1);
 	}
 	return (0);
-}
-
-int	input_to_int(char *arg)
-{
-	long	res;
-	int		i;
-
-	i = 0;
-	res = 0;
-	while (arg[i] >= '0' && arg[i] <= '9')
-	{
-		res = res * 10 + (arg[i] - '0');
-		i++;
-	}
-	return (res);
 }
 
 long int	input_to_long(char *arg, int *err)
@@ -120,8 +105,12 @@ int	process_input(int argc, char **argv, t_data *data)
 	return (0);
 }
 
-int	check_range(t_data *data)
+int	parse_input(int argc, char **argv, t_data *data)
 {
+	if (check_args_num(argc) == 1 || is_input_numeric(argc, argv) == 1)
+		return (1);
+	if (process_input(argc, argv, data) == 1)
+		return (1);
 	if (data->num_philos == 0)
 		return (print_error_msg("❌ Number of philosophers must be at least 1."),
 			1);
@@ -130,16 +119,5 @@ int	check_range(t_data *data)
 		return (print_error_msg("❌ Time must be greater than 0 ms."), 1);
 	if (data->num_must_eat == 0)
 		return (print_error_msg("❌ Times to eat must be more than 0."), 1);
-	return (0);
-}
-
-int	parse_input(int argc, char **argv, t_data *data)
-{
-	if (check_args_num(argc) == 1 || is_input_numeric(argc, argv) == 1)
-		return (1);
-	if (process_input(argc, argv, data) == 1)
-		return (1);
-	if (check_range(data) == 1)
-		return (1);
 	return (0);
 }

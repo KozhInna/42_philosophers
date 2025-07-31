@@ -6,7 +6,7 @@
 #    By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/23 13:58:19 by ikozhina          #+#    #+#              #
-#    Updated: 2025/07/24 13:19:43 by ikozhina         ###   ########.fr        #
+#    Updated: 2025/07/31 16:43:31 by ikozhina         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,8 +19,10 @@ CFLAGS := -Wall -Wextra -Werror -pthread -I./include
 SRC_DIR :=src/
 OBJS_DIR := objs
 
-SOURCE := $(SRC_DIR)/main.c $(SRC_DIR)/parsing.c  $(SRC_DIR)/exit_utils.c\
-		$(SRC_DIR)/init_sim.c
+SOURCE := $(SRC_DIR)/main.c $(SRC_DIR)/parsing.c $(SRC_DIR)/exit_utils.c\
+		$(SRC_DIR)/init_sim.c $(SRC_DIR)/time.c $(SRC_DIR)/eat.c\
+		$(SRC_DIR)/monitor.c $(SRC_DIR)/routine.c $(SRC_DIR)/run_sim.c
+
 HEADERS = include/philo.h
 
 OBJS = $(SOURCE:$(SRC_DIR)/%.c=$(OBJS_DIR)/%.o)

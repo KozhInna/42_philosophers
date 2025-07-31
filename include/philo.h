@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 13:58:04 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/31 13:32:33 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/31 16:45:18 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,14 +73,18 @@ typedef struct s_data
 }					t_data;
 
 int					parse_input(int argc, char **argv, t_data *data);
-void				print_usage_msg(char *msg);
-int					cleanup_data(t_data *data, int exit_code);
 int					init_simulation(t_data *data);
+int					run_simulation(t_data *data);
+void				*routine(void *arg);
+void				*monitor(void *arg);
+void				is_eating(t_philo *philo);
+void				print_state(t_philo *philo, char *state);
+int					all_eaten_enough(t_data *data);
+void				print_usage_msg(char *msg);
+void				print_error_msg(char *s);
 uint64_t			get_curr_time(void);
 uint64_t			time_since_sim_start(t_data *data);
-int					all_eaten_enough(t_data *data);
 void				ft_usleep(uint64_t sleep_time);
-int					join_threads(t_data *data, int num);
-void				print_error_msg(char *s);
+int					cleanup_data(t_data *data, int exit_code);
 
 #endif
