@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 16:34:39 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/31 16:48:36 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/07/31 17:43:44 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,12 +67,14 @@ void	is_eating(t_philo *philo)
 	take_forks(philo, left, right);
 	if (!data->sim_running)
 		return (release_forks(philo, left, right));
+	pthread_mutex_lock(&data->waiter.waiter_mutex);
 	philo->last_eat_time = time_since_sim_start(data);
 	philo->state = EATING;
+	pthread_mutex_unlock(&data->waiter.waiter_mutex);
 	print_state(philo, "is eating");
 	ft_usleep(data->time_to_eat);
+	pthread_mutex_lock(&data->waiter.waiter_mutex);
 	philo->num_eaten++;
-	if (data->num_must_eat > 0 && all_eaten_enough(data))
-		data->sim_running = 0;
+	pthread_mutex_unlock(&data->waiter.waiter_mutex);
 	release_forks(philo, left, right);
 }
