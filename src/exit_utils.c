@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:17:08 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/31 16:39:28 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/01 10:12:40 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ int	cleanup_data(t_data *data, int exit_code)
 		pthread_mutex_destroy(&data->print_mutex);
 	if (data->waiter.waiter_mutex_init)
 		pthread_mutex_destroy(&data->waiter.waiter_mutex);
+	if (data->sim_mutex_init)
+		pthread_mutex_destroy(&data->sim_mutex);
 	if (forks)
 	{
 		while (i < data->num_fork_mutex_init)

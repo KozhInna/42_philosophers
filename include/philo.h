@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 13:58:04 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/31 22:33:58 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/01 14:38:32 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,8 @@ typedef struct s_waiter
 typedef struct s_data
 {
 	int				sim_running;
+	pthread_mutex_t	sim_mutex;
+	bool			sim_mutex_init;
 	int				num_philos;
 	uint64_t		time_to_die;
 	uint64_t		time_to_eat;
@@ -77,7 +79,7 @@ int					init_simulation(t_data *data);
 int					run_simulation(t_data *data);
 void				*routine(void *arg);
 void				*monitor(void *arg);
-void				is_eating(t_philo *philo);
+int					is_eating(t_philo *philo);
 void				print_state(t_philo *philo, char *state);
 int					all_eaten_enough(t_data *data);
 void				print_usage_msg(char *msg);
@@ -86,6 +88,8 @@ uint64_t			get_curr_time(void);
 uint64_t			time_since_sim_start(t_data *data);
 void				ft_usleep(uint64_t sleep_time);
 int					cleanup_data(t_data *data, int exit_code);
-void	            ft_usleep_interupt(uint64_t sleep_time, t_data *data);
+void				ft_usleep_interupt(uint64_t sleep_time, t_data *data);
+int					is_sim_running(t_data *data);
+void				stop_sim(t_data *data);
 
 #endif

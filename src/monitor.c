@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 16:33:21 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/31 16:49:17 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/01 14:49:11 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int	is_smb_dead(t_data *data)
 
 	i = 0;
 	philos = data->philos;
-	while (i < data->num_philos && data->sim_running)
+	while (i < data->num_philos && is_sim_running(data))
 	{
 		pthread_mutex_lock(&data->waiter.waiter_mutex);
 		now = time_since_sim_start(data);
@@ -50,9 +50,9 @@ int	is_smb_dead(t_data *data)
 			&& philos[i].state != EATING)
 		{
 			philos[i].state = DEAD;
-			pthread_mutex_unlock(&data->waiter.waiter_mutex);
 			print_state(&philos[i], "died");
-			data->sim_running = 0;
+			stop_sim(data);
+			pthread_mutex_unlock(&data->waiter.waiter_mutex);
 			return (1);
 		}
 		pthread_mutex_unlock(&data->waiter.waiter_mutex);
@@ -68,15 +68,15 @@ void	*monitor(void *arg)
 	data = (t_data *)arg;
 	while (get_curr_time() < data->start_time)
 		ft_usleep(50);
-	while (data->sim_running)
+	while (is_sim_running(data))
 	{
 		if (is_smb_dead(data))
 			return (NULL);
-		if (data->num_must_eat > 0 && data->sim_running)
+		if (data->num_must_eat > 0 && is_sim_running(data))
 		{
 			if (all_eaten_enough(data))
 			{
-				data->sim_running = 0;
+				stop_sim(data);
 				return (NULL);
 			}
 		}

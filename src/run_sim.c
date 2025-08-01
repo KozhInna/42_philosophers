@@ -6,11 +6,28 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 16:37:59 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/31 16:48:55 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/01 14:48:10 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
+
+int	is_sim_running(t_data *data)
+{
+	int	status;
+
+	pthread_mutex_lock(&data->sim_mutex);
+	status = data->sim_running;
+	pthread_mutex_unlock(&data->sim_mutex);
+	return(status);
+}
+
+void	stop_sim(t_data *data)
+{
+	pthread_mutex_lock(&data->sim_mutex);
+	data->sim_running = 0;
+	pthread_mutex_unlock(&data->sim_mutex);
+}
 
 int	join_threads(t_data *data, int num)
 {
@@ -43,7 +60,7 @@ int	create_threads(t_data *data)
 		if (pthread_create(&philos[i].tid, NULL, routine,
 				(void *)&philos[i]) != 0)
 		{
-			data->sim_running = 0;
+			stop_sim(data);
 			join_threads(data, i);
 			return (1);
 		}
@@ -61,7 +78,7 @@ int	run_simulation(t_data *data)
 		return (1);
 	if (pthread_create(&monitor_tid, NULL, monitor, (void *)data) != 0)
 	{
-		data->sim_running = 0;
+		stop_sim(data);
 		join_threads(data, data->num_philos);
 		return (1);
 	}

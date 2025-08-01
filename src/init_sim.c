@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 13:15:17 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/31 16:21:25 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/01 10:10:58 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,9 @@ int	init_simulation(t_data *data)
 	if (pthread_mutex_init(&data->print_mutex, NULL) != 0)
 		return (1);
 	data->print_mutex_init = true;
+	if (pthread_mutex_init(&data->sim_mutex, NULL) != 0)
+		return (1);
+	data->sim_mutex_init = true;
 	if (create_philos(data) != 0)
 		return (1);
 	data->start_time = 0;

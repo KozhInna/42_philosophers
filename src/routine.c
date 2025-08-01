@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 16:30:30 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/31 23:09:24 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/01 14:48:55 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,35 +18,58 @@ void	print_state(t_philo *philo, char *state)
 	t_data		*data;
 
 	data = philo->main_data;
-	time = time_since_sim_start(data);
 	pthread_mutex_lock(&data->print_mutex);
-	if (!data->sim_running)
+	if (!is_sim_running(data) && philo->state != DEAD)
+	{
+		pthread_mutex_unlock(&data->print_mutex);
 		return ;
-	if (data->sim_running || (philo->state == DEAD))
-		printf("%lu %d %s\n", time, philo->id, state);
+	}
+	time = time_since_sim_start(data);
+	printf("%lu %d %s\n", time, philo->id, state);
 	pthread_mutex_unlock(&data->print_mutex);
 }
 
-void	is_sleeping(t_philo *philo)
-{
-	t_data      *data;
-
-	data = philo->main_data;
-	philo->state = SLEEPING;
-	print_state(philo, "is sleeping");
-    ft_usleep_interupt(data->time_to_sleep, data);
-}
-
-void	think_sleep(t_philo *philo, uint64_t time)
+int	is_sleeping(t_philo *philo)
 {
 	t_data	*data;
 
 	data = philo->main_data;
-	if (!data->sim_running)
-		return ;
+	if (!is_sim_running(data))
+		return (1);
+
+	pthread_mutex_lock(&data->waiter.waiter_mutex);
+    uint64_t time_since_last_meal = time_since_sim_start(data) - philo->last_eat_time;
+    pthread_mutex_unlock(&data->waiter.waiter_mutex);
+
+    if (time_since_last_meal + data->time_to_sleep >= data->time_to_die) {
+        return (0);
+    }
+
+	philo->state = SLEEPING;
+	print_state(philo, "is sleeping");
+	ft_usleep_interupt(data->time_to_sleep, data);
+	return (0);
+}
+
+int	think_sleep(t_philo *philo, uint64_t time)
+{
+	t_data	*data;
+
+	data = philo->main_data;
+	if (!is_sim_running(data))
+		return (1);
+
+	pthread_mutex_lock(&data->waiter.waiter_mutex);
+    uint64_t time_since_last_meal = time_since_sim_start(data) - philo->last_eat_time;
+    pthread_mutex_unlock(&data->waiter.waiter_mutex);
+
+    if (time_since_last_meal + time >= data->time_to_die)
+        return (0);
+
 	philo->state = THINKING;
 	print_state(philo, "is thinking");
 	ft_usleep_interupt(time, data);
+	return (0);
 }
 
 void	sim_delay(t_philo *philo, t_data *data)
@@ -57,7 +80,7 @@ void	sim_delay(t_philo *philo, t_data *data)
 	is_even = (philo->id % 2 == 0);
 	is_odd = (philo->id % 2 != 0);
 	if (is_odd && philo->id == data->num_philos && data->num_philos != 1)
-		think_sleep(philo, data->time_to_eat + data->time_to_sleep);
+		think_sleep(philo, data->time_to_eat * 2);
 	else if (is_even)
 		think_sleep(philo, data->time_to_eat);
 }
@@ -72,18 +95,15 @@ void	*routine(void *arg)
 	while (get_curr_time() < data->start_time)
 		ft_usleep(50);
 	sim_delay(philo, data);
-	while (data->sim_running)
+	while (1)
 	{
-		if (!data->sim_running)
+		if (is_eating(philo))
 			break ;
-		is_eating(philo);
-		if (!data->sim_running)
-			break ;
-		is_sleeping(philo);
-		if (!data->sim_running)
+		if (is_sleeping(philo))
 			break ;
 		if (data->num_philos % 2 != 0)
-			think_sleep(philo, data->time_to_eat);
+			if (think_sleep(philo, 5))
+				break ;
 	}
 	return (NULL);
 }
