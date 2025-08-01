@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 16:33:21 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/08/01 14:49:11 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/01 16:56:06 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ int	is_smb_dead(t_data *data)
 			&& philos[i].state != EATING)
 		{
 			philos[i].state = DEAD;
-			print_state(&philos[i], "died");
 			stop_sim(data);
+			print_state(&philos[i], "died");
 			pthread_mutex_unlock(&data->waiter.waiter_mutex);
 			return (1);
 		}
