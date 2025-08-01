@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 16:30:30 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/08/01 14:48:55 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/01 15:32:50 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,20 +31,19 @@ void	print_state(t_philo *philo, char *state)
 
 int	is_sleeping(t_philo *philo)
 {
-	t_data	*data;
+	t_data		*data;
+	uint64_t	time_since_last_meal;
 
 	data = philo->main_data;
 	if (!is_sim_running(data))
 		return (1);
-
 	pthread_mutex_lock(&data->waiter.waiter_mutex);
-    uint64_t time_since_last_meal = time_since_sim_start(data) - philo->last_eat_time;
-    pthread_mutex_unlock(&data->waiter.waiter_mutex);
-
-    if (time_since_last_meal + data->time_to_sleep >= data->time_to_die) {
-        return (0);
-    }
-
+	time_since_last_meal = time_since_sim_start(data) - philo->last_eat_time;
+	pthread_mutex_unlock(&data->waiter.waiter_mutex);
+	if (time_since_last_meal + data->time_to_sleep >= data->time_to_die)
+	{
+		return (0);
+	}
 	philo->state = SLEEPING;
 	print_state(philo, "is sleeping");
 	ft_usleep_interupt(data->time_to_sleep, data);
@@ -53,19 +52,17 @@ int	is_sleeping(t_philo *philo)
 
 int	think_sleep(t_philo *philo, uint64_t time)
 {
-	t_data	*data;
+	t_data		*data;
+	uint64_t	time_since_last_meal;
 
 	data = philo->main_data;
 	if (!is_sim_running(data))
 		return (1);
-
 	pthread_mutex_lock(&data->waiter.waiter_mutex);
-    uint64_t time_since_last_meal = time_since_sim_start(data) - philo->last_eat_time;
-    pthread_mutex_unlock(&data->waiter.waiter_mutex);
-
-    if (time_since_last_meal + time >= data->time_to_die)
-        return (0);
-
+	time_since_last_meal = time_since_sim_start(data) - philo->last_eat_time;
+	pthread_mutex_unlock(&data->waiter.waiter_mutex);
+	if (time_since_last_meal + time >= data->time_to_die)
+		return (0);
 	philo->state = THINKING;
 	print_state(philo, "is thinking");
 	ft_usleep_interupt(time, data);
