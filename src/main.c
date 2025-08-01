@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 10:38:39 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/07/31 16:40:13 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/01 15:59:59 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,5 +23,5 @@ int	main(int argc, char **argv)
 		return (cleanup_data(&data, 1));
 	if (run_simulation(&data) != 0)
 		return (cleanup_data(&data, 1));
-	return (0);
+	return (cleanup_data(&data, 0));
 }
