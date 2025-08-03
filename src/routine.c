@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 16:30:30 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/08/01 15:32:50 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/03 14:23:27 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,60 +25,62 @@ void	print_state(t_philo *philo, char *state)
 		return ;
 	}
 	time = time_since_sim_start(data);
-	printf("%lu %d %s\n", time, philo->id, state);
+	printf("%llu %d %s\n", time, philo->id, state);
 	pthread_mutex_unlock(&data->print_mutex);
 }
 
-int	is_sleeping(t_philo *philo)
+static int	is_sleeping(t_philo *philo)
 {
 	t_data		*data;
-	uint64_t	time_since_last_meal;
+	// uint64_t	time_since_last_meal;
 
 	data = philo->main_data;
 	if (!is_sim_running(data))
 		return (1);
-	pthread_mutex_lock(&data->waiter.waiter_mutex);
-	time_since_last_meal = time_since_sim_start(data) - philo->last_eat_time;
-	pthread_mutex_unlock(&data->waiter.waiter_mutex);
-	if (time_since_last_meal + data->time_to_sleep >= data->time_to_die)
-	{
-		return (0);
-	}
+	// pthread_mutex_lock(&data->waiter.waiter_mutex);
+	// time_since_last_meal = time_since_sim_start(data) - philo->last_eat_time;
+	// pthread_mutex_unlock(&data->waiter.waiter_mutex);
+	// if (time_since_last_meal + data->time_to_sleep >= data->time_to_die)
+	// {
+	// 	return (0);
+	// }
 	philo->state = SLEEPING;
 	print_state(philo, "is sleeping");
 	ft_usleep_interupt(data->time_to_sleep, data);
 	return (0);
 }
 
-int	think_sleep(t_philo *philo, uint64_t time)
+static int	think_sleep(t_philo *philo, uint64_t time)
 {
 	t_data		*data;
-	uint64_t	time_since_last_meal;
+	// uint64_t	time_since_last_meal;
 
 	data = philo->main_data;
 	if (!is_sim_running(data))
 		return (1);
-	pthread_mutex_lock(&data->waiter.waiter_mutex);
-	time_since_last_meal = time_since_sim_start(data) - philo->last_eat_time;
-	pthread_mutex_unlock(&data->waiter.waiter_mutex);
-	if (time_since_last_meal + time >= data->time_to_die)
-		return (0);
+	// pthread_mutex_lock(&data->waiter.waiter_mutex);
+	// time_since_last_meal = time_since_sim_start(data) - philo->last_eat_time;
+	// pthread_mutex_unlock(&data->waiter.waiter_mutex);
+	// if (time_since_last_meal + time >= data->time_to_die)
+	// 	return (0);
 	philo->state = THINKING;
 	print_state(philo, "is thinking");
 	ft_usleep_interupt(time, data);
 	return (0);
 }
 
-void	sim_delay(t_philo *philo, t_data *data)
+static void	sim_delay(t_philo *philo, t_data *data)
 {
-	bool	is_even;
+	// bool	is_even;
 	bool	is_odd;
 
-	is_even = (philo->id % 2 == 0);
+	// is_even = (philo->id % 2 == 0);
+    if (data->num_philos == 1)
+        return ;
 	is_odd = (philo->id % 2 != 0);
 	if (is_odd && philo->id == data->num_philos && data->num_philos != 1)
 		think_sleep(philo, data->time_to_eat * 2);
-	else if (is_even)
+	else if (is_odd)
 		think_sleep(philo, data->time_to_eat);
 }
 
@@ -99,7 +101,7 @@ void	*routine(void *arg)
 		if (is_sleeping(philo))
 			break ;
 		if (data->num_philos % 2 != 0)
-			if (think_sleep(philo, 5))
+			if (think_sleep(philo, 1))
 				break ;
 	}
 	return (NULL);

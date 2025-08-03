@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:17:08 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/08/01 10:12:40 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/03 14:26:42 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	cleanup_data(t_data *data, int exit_code)
 	int		i;
 
 	i = 0;
-	forks = data->waiter.forks;
+	forks = data->forks;
 	if (data->philos)
 	{
 		free(data->philos);
@@ -42,8 +42,8 @@ int	cleanup_data(t_data *data, int exit_code)
 	}
 	if (data->print_mutex_init)
 		pthread_mutex_destroy(&data->print_mutex);
-	if (data->waiter.waiter_mutex_init)
-		pthread_mutex_destroy(&data->waiter.waiter_mutex);
+	if (data->state_mutex_init)
+		pthread_mutex_destroy(&data->state_mutex);
 	if (data->sim_mutex_init)
 		pthread_mutex_destroy(&data->sim_mutex);
 	if (forks)
@@ -51,12 +51,12 @@ int	cleanup_data(t_data *data, int exit_code)
 		while (i < data->num_fork_mutex_init)
 			pthread_mutex_destroy(&forks[i++].mutex);
 		free(forks);
-		data->waiter.forks = NULL;
+		data->forks = NULL;
 	}
 	return (exit_code);
 }
 
-size_t	ft_strlen(const char *s)
+static size_t	ft_strlen(const char *s)
 {
 	size_t	i;
 

@@ -6,13 +6,13 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 13:15:17 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/08/01 10:10:58 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/03 14:26:08 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 
-int	create_philos(t_data *data)
+static int	create_philos(t_data *data)
 {
 	t_philo	*arr_of_philos;
 	int		i;
@@ -37,13 +37,13 @@ int	create_philos(t_data *data)
 	return (0);
 }
 
-int	init_forks(t_data *data)
+static int	init_forks(t_data *data)
 {
 	int		i;
 	t_fork	*forks;
 
 	i = 0;
-	forks = data->waiter.forks;
+	forks = data->forks;
 	while (i < data->num_philos)
 	{
 		forks[i].id = i + 1;
@@ -64,13 +64,13 @@ int	init_simulation(t_data *data)
 	forks = malloc(data->num_philos * sizeof(t_fork));
 	if (!forks)
 		return (1);
-	data->waiter.forks = forks;
+	data->forks = forks;
 	data->num_fork_mutex_init = 0;
 	if (init_forks(data) != 0)
 		return (1);
-	if (pthread_mutex_init(&data->waiter.waiter_mutex, NULL) != 0)
+	if (pthread_mutex_init(&data->state_mutex, NULL) != 0)
 		return (1);
-	data->waiter.waiter_mutex_init = true;
+	data->state_mutex_init = true;
 	if (pthread_mutex_init(&data->print_mutex, NULL) != 0)
 		return (1);
 	data->print_mutex_init = true;

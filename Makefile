@@ -6,7 +6,7 @@
 #    By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/23 13:58:19 by ikozhina          #+#    #+#              #
-#    Updated: 2025/07/31 16:43:31 by ikozhina         ###   ########.fr        #
+#    Updated: 2025/08/03 14:29:06 by ikozhina         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,8 @@ OBJS_DIR := objs
 
 SOURCE := $(SRC_DIR)/main.c $(SRC_DIR)/parsing.c $(SRC_DIR)/exit_utils.c\
 		$(SRC_DIR)/init_sim.c $(SRC_DIR)/time.c $(SRC_DIR)/eat.c\
-		$(SRC_DIR)/monitor.c $(SRC_DIR)/routine.c $(SRC_DIR)/run_sim.c
+		$(SRC_DIR)/monitor.c $(SRC_DIR)/routine.c $(SRC_DIR)/run_sim.c\
+		$(SRC_DIR)/eat_take_fork.c
 
 HEADERS = include/philo.h
 

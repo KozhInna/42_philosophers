@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 16:37:59 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/08/01 14:48:10 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/03 14:22:27 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	stop_sim(t_data *data)
 	pthread_mutex_unlock(&data->sim_mutex);
 }
 
-int	join_threads(t_data *data, int num)
+static int	join_threads(t_data *data, int num)
 {
 	t_philo	*threads;
 	int		i;
@@ -48,7 +48,7 @@ int	join_threads(t_data *data, int num)
 	return (0);
 }
 
-int	create_threads(t_data *data)
+static int	create_threads(t_data *data)
 {
 	t_philo	*philos;
 	int		i;
@@ -62,6 +62,7 @@ int	create_threads(t_data *data)
 		{
 			stop_sim(data);
 			join_threads(data, i);
+            printf("Thread creation failed.\n");
 			return (1);
 		}
 		i++;
