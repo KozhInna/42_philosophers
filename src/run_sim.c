@@ -6,11 +6,11 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 16:37:59 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/08/03 14:22:27 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/04 12:31:59 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <philo.h>
+#include "philo.h"
 
 int	is_sim_running(t_data *data)
 {
@@ -19,7 +19,7 @@ int	is_sim_running(t_data *data)
 	pthread_mutex_lock(&data->sim_mutex);
 	status = data->sim_running;
 	pthread_mutex_unlock(&data->sim_mutex);
-	return(status);
+	return (status);
 }
 
 void	stop_sim(t_data *data)
@@ -62,7 +62,7 @@ static int	create_threads(t_data *data)
 		{
 			stop_sim(data);
 			join_threads(data, i);
-            printf("Thread creation failed.\n");
+			printf("Thread creation failed.\n");
 			return (1);
 		}
 		i++;

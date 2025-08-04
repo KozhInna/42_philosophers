@@ -6,11 +6,11 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:15:15 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/08/04 10:21:38 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/04 12:32:06 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <philo.h>
+#include "philo.h"
 
 static int	is_input_numeric(int argc, char **argv)
 {
@@ -85,7 +85,7 @@ static int	process_input(int argc, char **argv, t_data *data)
 	err = 0;
 	data->num_philos = input_to_long(argv[1], &err);
 	if (err == 0)
-		data->time_to_die = (uint64_t) input_to_long(argv[2], &err);
+		data->time_to_die = (uint64_t)input_to_long(argv[2], &err);
 	if (err == 0)
 		data->time_to_eat = (uint64_t)input_to_long(argv[3], &err);
 	if (err == 0)
@@ -98,10 +98,6 @@ static int	process_input(int argc, char **argv, t_data *data)
 		return (print_usage_msg("❌ Arguments can't be negative."), 1);
 	else if (err == -3)
 		return (print_usage_msg("❌ Arguments value is too big."), 1);
-	// if (data->time_to_eat > data->time_to_die)
-	// 	data->time_to_eat = data->time_to_die;
-	// if (data->time_to_sleep > data->time_to_die)
-	// 	data->time_to_sleep = data->time_to_die;
 	return (0);
 }
 

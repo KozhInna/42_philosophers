@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 13:58:04 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/08/03 14:57:50 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/04 12:29:49 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,36 +49,24 @@ typedef struct s_fork
 	pthread_mutex_t	mutex;
 }					t_fork;
 
-// typedef struct s_waiter
-// {
-// 	pthread_mutex_t	waiter_mutex;
-// 	bool			waiter_mutex_init;
-// 	t_fork			*forks;
-// }					t_waiter;
-
 typedef struct s_data
 {
 	int				sim_running;
 	pthread_mutex_t	sim_mutex;
 	bool			sim_mutex_init;
-    
-    pthread_mutex_t	state_mutex;
+	pthread_mutex_t	state_mutex;
 	bool			state_mutex_init;
 	t_fork			*forks;
-
-    pthread_mutex_t	print_mutex;
+	pthread_mutex_t	print_mutex;
 	bool			print_mutex_init;
 	bool			num_fork_mutex_init;
-
 	int				num_philos;
+	int				num_must_eat;
 	uint64_t		time_to_die;
 	uint64_t		time_to_eat;
 	uint64_t		time_to_sleep;
-	int				num_must_eat;
 	uint64_t		start_time;
 	t_philo			*philos;
-	// t_waiter		waiter;
-
 }					t_data;
 
 int					parse_input(int argc, char **argv, t_data *data);
@@ -87,9 +75,9 @@ int					run_simulation(t_data *data);
 void				*routine(void *arg);
 void				*monitor(void *arg);
 int					is_eating(t_philo *philo);
-int	                take_forks(t_philo *philo, int left, int right, t_data *data);
+int					take_forks(t_philo *philo, int left, int right,
+						t_data *data);
 void				print_state(t_philo *philo, char *state);
-// int					all_eaten_enough(t_data *data);
 void				print_usage_msg(char *msg);
 void				print_error_msg(char *s);
 uint64_t			get_curr_time(void);

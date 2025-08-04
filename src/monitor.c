@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 16:33:21 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/08/03 14:25:17 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/04 12:28:20 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static int	is_smb_dead(t_data *data)
 	{
 		pthread_mutex_lock(&data->state_mutex);
 		now = time_since_sim_start(data);
-		if ((now - philos[i].last_eat_time) > data->time_to_die )//&& philos[i].state != EATING)
+		if ((now - philos[i].last_eat_time) > data->time_to_die)
 		{
 			philos[i].state = DEAD;
 			stop_sim(data);
