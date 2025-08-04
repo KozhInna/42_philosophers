@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:15:15 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/08/03 14:57:43 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/04 10:21:38 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static int	check_args_num(int argc)
 	return (0);
 }
 
-static long int	input_to_long(char *arg, int *err)
+static int	input_to_long(char *arg, int *err)
 {
 	long	res;
 
@@ -85,11 +85,11 @@ static int	process_input(int argc, char **argv, t_data *data)
 	err = 0;
 	data->num_philos = input_to_long(argv[1], &err);
 	if (err == 0)
-		data->time_to_die = input_to_long(argv[2], &err);
+		data->time_to_die = (uint64_t) input_to_long(argv[2], &err);
 	if (err == 0)
-		data->time_to_eat = input_to_long(argv[3], &err);
+		data->time_to_eat = (uint64_t)input_to_long(argv[3], &err);
 	if (err == 0)
-		data->time_to_sleep = input_to_long(argv[4], &err);
+		data->time_to_sleep = (uint64_t)input_to_long(argv[4], &err);
 	if (argc == 6 && err == 0)
 		data->num_must_eat = input_to_long(argv[5], &err);
 	else
