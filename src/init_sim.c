@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 13:15:17 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/08/03 14:26:08 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/04 10:06:32 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static int	create_philos(t_data *data)
 	arr_of_philos = malloc(data->num_philos * sizeof(t_philo));
 	if (!arr_of_philos)
 	{
-		perror("malloc");
+		print_error_msg("Malloc failed");
 		return (1);
 	}
 	while (i < data->num_philos)
@@ -63,7 +63,7 @@ int	init_simulation(t_data *data)
 	data->sim_running = 1;
 	forks = malloc(data->num_philos * sizeof(t_fork));
 	if (!forks)
-		return (1);
+		return (print_error_msg("Malloc failed"), 1);
 	data->forks = forks;
 	data->num_fork_mutex_init = 0;
 	if (init_forks(data) != 0)
