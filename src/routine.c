@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 16:30:30 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/08/04 12:27:59 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/06 10:11:12 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	print_state(t_philo *philo, char *state)
 
 	data = philo->main_data;
 	pthread_mutex_lock(&data->print_mutex);
-	if (!is_sim_running(data) && philo->state != DEAD)
+	if (!is_sim_running(data))
 	{
 		pthread_mutex_unlock(&data->print_mutex);
 		return ;
@@ -36,7 +36,6 @@ static int	is_sleeping(t_philo *philo)
 	data = philo->main_data;
 	if (!is_sim_running(data))
 		return (1);
-	philo->state = SLEEPING;
 	print_state(philo, "is sleeping");
 	ft_usleep_interupt(data->time_to_sleep, data);
 	return (0);
@@ -49,7 +48,6 @@ static int	think_sleep(t_philo *philo, uint64_t time)
 	data = philo->main_data;
 	if (!is_sim_running(data))
 		return (1);
-	philo->state = THINKING;
 	print_state(philo, "is thinking");
 	ft_usleep_interupt(time, data);
 	return (0);

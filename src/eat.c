@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 16:34:39 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/08/04 12:28:54 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/06 10:12:38 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ static void	handle_one_philo(t_philo *philo, t_data *data)
 	forks = data->forks;
 	pthread_mutex_lock(&forks[0].mutex);
 	forks[0].is_available = false;
-	philo->state = WAITING_FORK;
 	print_state(philo, "has taken a fork");
 	while (is_sim_running(data))
 		ft_usleep(1000);
@@ -42,7 +41,6 @@ static void	update_eating_state(t_philo *philo, t_data *data)
 {
 	pthread_mutex_lock(&data->state_mutex);
 	philo->last_eat_time = time_since_sim_start(data);
-	philo->state = EATING;
 	pthread_mutex_unlock(&data->state_mutex);
 }
 

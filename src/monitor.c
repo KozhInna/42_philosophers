@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 16:33:21 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/08/04 12:28:20 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/06 10:12:14 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ static int	all_eaten_enough(t_data *data)
 static int	is_smb_dead(t_data *data)
 {
 	uint64_t	now;
+	uint64_t	time;
 	t_philo		*philos;
 	int			i;
 
@@ -48,10 +49,12 @@ static int	is_smb_dead(t_data *data)
 		now = time_since_sim_start(data);
 		if ((now - philos[i].last_eat_time) > data->time_to_die)
 		{
-			philos[i].state = DEAD;
-			stop_sim(data);
-			print_state(&philos[i], "died");
 			pthread_mutex_unlock(&data->state_mutex);
+			stop_sim(data);
+			pthread_mutex_lock(&data->print_mutex);
+			time = time_since_sim_start(data);
+			printf("%lu %d %s\n", time, philos[i].id, "died");
+			pthread_mutex_unlock(&data->print_mutex);
 			return (1);
 		}
 		pthread_mutex_unlock(&data->state_mutex);

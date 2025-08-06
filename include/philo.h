@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 13:58:04 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/08/04 12:29:49 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/06 10:26:04 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,22 +23,12 @@
 # include <sys/time.h>
 # include <unistd.h>
 
-typedef enum s_state
-{
-	EATING,
-	THINKING,
-	SLEEPING,
-	WAITING_FORK,
-	DEAD
-}					t_state;
-
 typedef struct s_philo
 {
 	int				id;
 	pthread_t		tid;
 	uint64_t		last_eat_time;
 	int				num_eaten;
-	t_state			state;
 	struct s_data	*main_data;
 }					t_philo;
 

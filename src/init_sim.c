@@ -6,7 +6,7 @@
 /*   By: ikozhina <ikozhina@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 13:15:17 by ikozhina          #+#    #+#             */
-/*   Updated: 2025/08/04 12:32:15 by ikozhina         ###   ########.fr       */
+/*   Updated: 2025/08/06 10:12:28 by ikozhina         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ static int	create_philos(t_data *data)
 		arr_of_philos[i].id = i + 1;
 		arr_of_philos[i].main_data = data;
 		arr_of_philos[i].num_eaten = 0;
-		arr_of_philos[i].state = THINKING;
 		arr_of_philos[i].last_eat_time = 0;
 		i++;
 	}
